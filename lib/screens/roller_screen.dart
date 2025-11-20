@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../constants/app_constants.dart';
 import '../widgets/display/result_display.dart';
 import '../widgets/sheets/presets_sheet.dart';
 import '../widgets/sheets/history_sheet.dart';
@@ -12,7 +13,7 @@ class DiceRollerScreen extends StatelessWidget {
   void _showPresetsSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF1E293B),
+      backgroundColor: AppColors.sheetBackground,
       showDragHandle: true,
       isScrollControlled: true,
       builder: (ctx) => const PresetsSheet(),
@@ -22,7 +23,7 @@ class DiceRollerScreen extends StatelessWidget {
   void _showHistorySheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF1E293B),
+      backgroundColor: AppColors.sheetBackground,
       showDragHandle: true,
       isScrollControlled: true,
       builder: (ctx) => const HistorySheet(),
@@ -32,7 +33,7 @@ class DiceRollerScreen extends StatelessWidget {
   void _showSettingsSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF1E293B),
+      backgroundColor: AppColors.sheetBackground,
       showDragHandle: true,
       builder: (ctx) => const SettingsSheet(),
     );
@@ -82,11 +83,11 @@ class DiceRollerScreen extends StatelessWidget {
               flex: 4,
               child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(AppSpacing.xl),
                 child: const ResultDisplay(),
               ),
             ),
-            const Expanded(flex: 5, child: RollerControls()),
+            const Expanded(flex: 4, child: RollerControls()),
           ],
         ),
       ),

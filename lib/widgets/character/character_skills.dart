@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../constants/app_constants.dart';
 import '../../providers/character_controller.dart';
 import '../../providers/dice_controller.dart';
 import '../../models/roll_result.dart';
@@ -36,7 +37,10 @@ class CharacterSkills extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 4, bottom: 12),
+                padding: const EdgeInsets.only(
+                  left: AppSpacing.xs,
+                  bottom: AppSpacing.m,
+                ),
                 child: Text(
                   "$attr SKILLS",
                   style: TextStyle(
@@ -48,8 +52,8 @@ class CharacterSkills extends StatelessWidget {
                 ),
               ),
               Wrap(
-                spacing: 8,
-                runSpacing: 8,
+                spacing: AppSpacing.s,
+                runSpacing: AppSpacing.s,
                 children: skills.map((skillName) {
                   final bonus = controller.getSkillBonus(skillName);
                   final isProficient = char.proficientSkills.contains(
@@ -82,7 +86,7 @@ class CharacterSkills extends StatelessWidget {
                   );
                 }).toList(),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSpacing.xl),
             ],
           );
         }),
@@ -106,13 +110,16 @@ class CharacterSkills extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.m,
+          vertical: AppSpacing.s,
+        ),
         decoration: BoxDecoration(
           // Subtle background tint if proficient
           color: isProficient
               ? primaryColor.withValues(alpha: 0.15)
-              : const Color(0xFF334155),
-          borderRadius: BorderRadius.circular(12),
+              : AppColors.chipBackground,
+          borderRadius: BorderRadius.circular(AppRadius.l),
           // Border highlight if proficient
           border: Border.all(
             color: isProficient ? primaryColor : Colors.transparent,
@@ -132,12 +139,12 @@ class CharacterSkills extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppSpacing.s),
             ],
             Text(
               name,
               style: TextStyle(
-                color: isProficient ? Colors.white : Colors.white70,
+                color: isProficient ? Colors.white : AppColors.textWhite70,
                 fontWeight: isProficient ? FontWeight.w600 : FontWeight.normal,
                 fontSize: 13,
               ),
@@ -147,8 +154,8 @@ class CharacterSkills extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: Colors.black26,
-                borderRadius: BorderRadius.circular(6),
+                color: AppColors.shadow,
+                borderRadius: BorderRadius.circular(AppRadius.s),
               ),
               child: Text(
                 bonusStr,
@@ -157,7 +164,7 @@ class CharacterSkills extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   color: isProficient
                       ? primaryColor.withValues(alpha: 0.9)
-                      : Colors.white54,
+                      : AppColors.textWhite54,
                 ),
               ),
             ),

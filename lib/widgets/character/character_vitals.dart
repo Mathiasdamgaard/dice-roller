@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../constants/app_constants.dart';
 import '../../providers/character_controller.dart';
 import '../dialogs/number_edit_dialog.dart';
 
@@ -28,7 +29,7 @@ class CharacterVitals extends StatelessWidget {
                 )
               : null,
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: AppSpacing.m),
         _buildVitalCard(
           context,
           "AC",
@@ -43,7 +44,7 @@ class CharacterVitals extends StatelessWidget {
                 )
               : null,
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: AppSpacing.m),
         _buildVitalCard(
           context,
           "PROF",
@@ -73,16 +74,16 @@ class CharacterVitals extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(AppSpacing.m),
           decoration: BoxDecoration(
-            color: const Color(0xFF1E293B),
-            borderRadius: BorderRadius.circular(16),
+            color: AppColors.cardBackground,
+            borderRadius: BorderRadius.circular(AppRadius.xl),
             border: Border.all(color: Colors.white10),
           ),
           child: Column(
             children: [
-              Icon(icon, size: 20, color: Colors.white54),
-              const SizedBox(height: 8),
+              Icon(icon, size: 20, color: AppColors.textWhite54),
+              const SizedBox(height: AppSpacing.s),
               Text(
                 value,
                 style: const TextStyle(
@@ -91,13 +92,13 @@ class CharacterVitals extends StatelessWidget {
                   color: Colors.white,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: AppSpacing.xs),
               Text(
                 label,
                 style: const TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white38,
+                  color: AppColors.textWhite38,
                   letterSpacing: 1,
                 ),
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../constants/app_constants.dart';
 import '../../providers/character_controller.dart';
 import '../dialogs/number_edit_dialog.dart';
 
@@ -16,8 +17,8 @@ class CharacterAttributes extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       childAspectRatio: 0.85,
-      crossAxisSpacing: 12,
-      mainAxisSpacing: 12,
+      crossAxisSpacing: AppSpacing.m,
+      mainAxisSpacing: AppSpacing.m,
       children: [
         _buildAttrCard(context, "STR", char.strength, controller),
         _buildAttrCard(context, "DEX", char.dexterity, controller),
@@ -45,13 +46,13 @@ class CharacterAttributes extends StatelessWidget {
           : null,
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF334155),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
+          color: AppColors.attributeCardBackground,
+          borderRadius: BorderRadius.circular(AppRadius.xl),
+          boxShadow: const [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.2),
+              color: AppColors.shadow,
               blurRadius: 4,
-              offset: const Offset(0, 2),
+              offset: Offset(0, 2),
             ),
           ],
         ),
@@ -63,10 +64,10 @@ class CharacterAttributes extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
-                color: Colors.white70,
+                color: AppColors.textWhite70,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.s),
             Text(
               modStr,
               style: const TextStyle(
@@ -76,15 +77,18 @@ class CharacterAttributes extends StatelessWidget {
               ),
             ),
             Container(
-              margin: const EdgeInsets.only(top: 8),
+              margin: const EdgeInsets.only(top: AppSpacing.s),
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: Colors.black26,
-                borderRadius: BorderRadius.circular(8),
+                color: AppColors.shadow,
+                borderRadius: BorderRadius.circular(AppRadius.m),
               ),
               child: Text(
                 "$score",
-                style: const TextStyle(fontSize: 12, color: Colors.white54),
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: AppColors.textWhite54,
+                ),
               ),
             ),
           ],

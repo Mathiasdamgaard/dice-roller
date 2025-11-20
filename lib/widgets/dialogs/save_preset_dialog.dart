@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../constants/app_constants.dart';
 import '../../providers/dice_controller.dart';
 
 class SavePresetDialog extends StatefulWidget {
@@ -23,7 +24,7 @@ class _SavePresetDialogState extends State<SavePresetDialog> {
     final controller = context.read<DiceController>();
 
     return AlertDialog(
-      backgroundColor: const Color(0xFF1E293B),
+      backgroundColor: AppColors.cardBackground,
       title: const Text("Save Preset"),
       content: TextField(
         controller: _textController,
@@ -31,7 +32,7 @@ class _SavePresetDialogState extends State<SavePresetDialog> {
           labelText: "Preset Name",
           hintText: "e.g., Fireball",
           filled: true,
-          fillColor: Color(0xFF0F172A),
+          fillColor: AppColors.inputFill,
         ),
         autofocus: true,
       ),

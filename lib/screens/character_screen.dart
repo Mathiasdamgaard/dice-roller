@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../constants/app_constants.dart';
 import '../providers/character_controller.dart';
 import '../widgets/character/character_vitals.dart';
 import '../widgets/character/character_attributes.dart';
@@ -28,18 +29,18 @@ class CharacterScreen extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AppSpacing.l),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // --- Vitals Row (HP, AC) ---
             const CharacterVitals(),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.xl),
 
             // --- Attributes Grid ---
             const CharacterAttributes(),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: AppSpacing.xxl),
 
             // --- Skills Sections (Grouped by Attribute) ---
             CharacterSkills(onRollRequest: onRollRequest),

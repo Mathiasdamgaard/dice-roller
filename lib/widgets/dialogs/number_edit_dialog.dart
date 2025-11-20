@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../constants/app_constants.dart';
 
 class NumberEditDialog extends StatefulWidget {
   final String label;
@@ -34,7 +35,7 @@ class _NumberEditDialogState extends State<NumberEditDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: const Color(0xFF1E293B),
+      backgroundColor: AppColors.cardBackground,
       title: Text("Edit ${widget.label}"),
       content: TextField(
         controller: _ctrl,
@@ -42,7 +43,7 @@ class _NumberEditDialogState extends State<NumberEditDialog> {
         autofocus: true,
         decoration: const InputDecoration(
           filled: true,
-          fillColor: Color(0xFF0F172A),
+          fillColor: AppColors.inputFill,
         ),
       ),
       actions: [
