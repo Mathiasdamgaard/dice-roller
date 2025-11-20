@@ -6,7 +6,6 @@ import 'screens/home_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Initialize controller and load data immediately
   final diceController = DiceController();
   await diceController.loadState();
 

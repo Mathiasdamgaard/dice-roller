@@ -3,8 +3,14 @@ import 'package:flutter/material.dart';
 class ShakeWidget extends StatefulWidget {
   final Widget child;
   final bool isShaking;
+  final double intensity; // New parameter
 
-  const ShakeWidget({super.key, required this.child, required this.isShaking});
+  const ShakeWidget({
+    super.key,
+    required this.child,
+    required this.isShaking,
+    this.intensity = 1.0, // Default standard shake
+  });
 
   @override
   State<ShakeWidget> createState() => _ShakeWidgetState();
@@ -22,6 +28,7 @@ class _ShakeWidgetState extends State<ShakeWidget>
       duration: const Duration(milliseconds: 100),
       vsync: this,
     );
+    // Base shake is -5 to 5 pixels
     _offsetAnimation = Tween<double>(
       begin: -5.0,
       end: 5.0,
@@ -54,10 +61,12 @@ class _ShakeWidgetState extends State<ShakeWidget>
     return AnimatedBuilder(
       animation: _offsetAnimation,
       builder: (context, child) {
-        return Transform.translate(
-          offset: Offset(widget.isShaking ? _offsetAnimation.value : 0, 0),
-          child: child,
-        );
+        // Multiply the base offset by the intensity
+        final offset = widget.isShaking
+            ? _offsetAnimation.value * widget.intensity
+            : 0.0;
+
+        return Transform.translate(offset: Offset(offset, 0), child: child);
       },
       child: widget.child,
     );

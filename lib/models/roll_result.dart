@@ -8,6 +8,7 @@ class RollResult {
   final List<int>? discardedRolls;
   final int dieSides;
   final DateTime timestamp;
+  final int explosionCount; // New field
 
   RollResult({
     required this.total,
@@ -17,6 +18,7 @@ class RollResult {
     required this.dieSides,
     required this.timestamp,
     this.discardedRolls,
+    this.explosionCount = 0, // Default to 0
   });
 
   Map<String, dynamic> toJson() => {
@@ -27,6 +29,7 @@ class RollResult {
     'discardedRolls': discardedRolls,
     'dieSides': dieSides,
     'timestamp': timestamp.toIso8601String(),
+    'explosionCount': explosionCount,
   };
 
   factory RollResult.fromJson(Map<String, dynamic> json) => RollResult(
@@ -34,8 +37,11 @@ class RollResult {
     individualRolls: List<int>.from(json['individualRolls']),
     modifier: json['modifier'],
     mode: RollMode.values[json['mode']],
-    discardedRolls: json['discardedRolls'] != null ? List<int>.from(json['discardedRolls']) : null,
+    discardedRolls: json['discardedRolls'] != null
+        ? List<int>.from(json['discardedRolls'])
+        : null,
     dieSides: json['dieSides'],
     timestamp: DateTime.parse(json['timestamp']),
+    explosionCount: json['explosionCount'] ?? 0,
   );
 }

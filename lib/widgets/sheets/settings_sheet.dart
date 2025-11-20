@@ -29,7 +29,6 @@ class SettingsSheet extends StatelessWidget {
             spacing: 16,
             runSpacing: 16,
             children: colors.map((color) {
-              // FIXED: Use toARGB32() instead of deprecated .value
               final isSelected =
                   controller.seedColor.toARGB32() == color.toARGB32();
               return GestureDetector(
@@ -79,6 +78,25 @@ class SettingsSheet extends StatelessWidget {
             value: controller.instantRoll,
             activeThumbColor: Theme.of(context).colorScheme.primary,
             onChanged: (val) => controller.toggleInstantRoll(),
+          ),
+
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            title: const Text(
+              "Exploding Dice",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            subtitle: const Text(
+              "Re-roll max values and add to total",
+              style: TextStyle(color: Colors.white54),
+            ),
+            secondary: const Icon(
+              Icons.local_fire_department,
+              color: Colors.orange,
+            ),
+            value: controller.explodingDice,
+            activeThumbColor: Colors.orange,
+            onChanged: (val) => controller.toggleExplodingDice(),
           ),
 
           const SizedBox(height: 16),
