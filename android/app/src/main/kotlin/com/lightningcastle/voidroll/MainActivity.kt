@@ -1,4 +1,4 @@
-package com.example.dice_roller
+package com.lightningcastle.voidroll
 
 import io.flutter.embedding.android.FlutterActivity
 

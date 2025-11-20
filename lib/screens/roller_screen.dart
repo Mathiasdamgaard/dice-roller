@@ -93,7 +93,7 @@ class DiceRollerScreen extends StatelessWidget {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text(
-          "FateForged",
+          "VoidRoll",
           style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1),
         ),
         backgroundColor: Colors.transparent,

@@ -2,7 +2,7 @@ import 'package:dice_roller/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/dice_controller.dart';
-import 'providers/character_controller.dart'; // Import new provider
+import 'providers/character_controller.dart'; 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -10,7 +10,7 @@ void main() async {
   final diceController = DiceController();
   await diceController.loadState();
 
-  final charController = CharacterController(); // Initialize character
+  final charController = CharacterController();
   await charController.loadCharacter();
 
   runApp(
@@ -19,7 +19,7 @@ void main() async {
         ChangeNotifierProvider.value(value: diceController),
         ChangeNotifierProvider.value(
           value: charController,
-        ), // Register provider
+        ), 
       ],
       child: const DiceApp(),
     ),
@@ -34,7 +34,7 @@ class DiceApp extends StatelessWidget {
     final seedColor = context.select((DiceController c) => c.seedColor);
 
     return MaterialApp(
-      title: 'FateForged',
+      title: 'VoidRoll',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
@@ -45,7 +45,6 @@ class DiceApp extends StatelessWidget {
         ),
         scaffoldBackgroundColor: const Color(0xFF0F172A),
         splashFactory: InkSparkle.splashFactory,
-        // Customizing Navigation Bar Theme to match our dark look
         navigationBarTheme: NavigationBarThemeData(
           iconTheme: WidgetStateProperty.all(
             const IconThemeData(color: Colors.white70),
