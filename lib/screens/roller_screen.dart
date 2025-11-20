@@ -1,59 +1,13 @@
-import 'package:dice_roller/widgets/inputs/dice_selector.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../providers/dice_controller.dart';
 import '../widgets/display/result_display.dart';
-import '../widgets/inputs/count_selector.dart';
-import '../widgets/inputs/modifier_selector.dart';
-import '../widgets/inputs/mode_selector.dart';
 import '../widgets/sheets/presets_sheet.dart';
 import '../widgets/sheets/history_sheet.dart';
 import '../widgets/sheets/settings_sheet.dart';
+import '../widgets/roller/roller_controls.dart';
 
 class DiceRollerScreen extends StatelessWidget {
   const DiceRollerScreen({super.key});
-
-  void _showSaveDialog(BuildContext context) {
-    final controller = context.read<DiceController>();
-    final textController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1E293B),
-        title: const Text("Save Preset"),
-        content: TextField(
-          controller: textController,
-          decoration: const InputDecoration(
-            labelText: "Preset Name",
-            hintText: "e.g., Fireball",
-            filled: true,
-            fillColor: Color(0xFF0F172A),
-          ),
-          autofocus: true,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text("Cancel"),
-          ),
-          FilledButton(
-            onPressed: () {
-              if (textController.text.isNotEmpty) {
-                controller.saveCurrentPreset(textController.text);
-                Navigator.pop(ctx);
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(const SnackBar(content: Text("Preset Saved!")));
-              }
-            },
-            child: const Text("Save"),
-          ),
-        ],
-      ),
-    );
-  }
 
   void _showPresetsSheet(BuildContext context) {
     showModalBottomSheet(
@@ -86,8 +40,12 @@ class DiceRollerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isRolling = context.select((DiceController c) => c.isRolling);
-    final colorScheme = Theme.of(context).colorScheme;
+    // We still need to listen to isRolling to potentially disable actions in AppBar if needed,
+    // but currently the AppBar actions don't depend on isRolling.
+    // However, the original code accessed isRolling here.
+    // Let's check if we need it. The original code used it for the buttons which are now in RollerControls.
+    // So we might not need it here anymore unless we want to disable AppBar buttons during roll.
+    // The original code didn't disable AppBar buttons.
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -121,186 +79,14 @@ class DiceRollerScreen extends StatelessWidget {
         child: Column(
           children: [
             Expanded(
-              flex: 4, // Increased from 3 to 4
+              flex: 4,
               child: Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(24),
                 child: const ResultDisplay(),
               ),
             ),
-            Expanded(
-              flex: 5, // Kept at 5
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: Color(0xFF1E293B),
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 10,
-                      offset: Offset(0, -5),
-                    ),
-                  ],
-                ),
-                padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    return SingleChildScrollView(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minHeight: constraints.maxHeight,
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // --- Group 1: Dice Type ---
-                            const Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  "Dice Type",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white70,
-                                  ),
-                                ),
-                                SizedBox(height: 12),
-                                DiceTypeRow(),
-                              ],
-                            ),
-
-                            // --- Group 2: Counts ---
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 8),
-                              child: Row(
-                                children: [
-                                  Expanded(child: DiceCountSelector()),
-                                  SizedBox(width: 16),
-                                  Expanded(child: ModifierSelector()),
-                                ],
-                              ),
-                            ),
-
-                            // --- Group 3: Mode ---
-                            const Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  "Mode",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white70,
-                                  ),
-                                ),
-                                SizedBox(height: 12),
-                                ModeSelector(),
-                              ],
-                            ),
-
-                            // --- Group 4: Buttons ---
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: OutlinedButton.icon(
-                                    onPressed: isRolling
-                                        ? null
-                                        : () => _showSaveDialog(context),
-                                    icon: const Icon(Icons.save_alt),
-                                    label: const Text("Save"),
-                                    style: OutlinedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 16,
-                                      ),
-                                      side: const BorderSide(
-                                        color: Colors.white24,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  flex: 2,
-                                  child: DecoratedBox(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(30),
-                                      gradient: isRolling
-                                          ? const LinearGradient(
-                                              colors: [
-                                                Colors.grey,
-                                                Colors.grey,
-                                              ],
-                                            )
-                                          : LinearGradient(
-                                              colors: [
-                                                colorScheme.primary,
-                                                colorScheme.tertiary,
-                                              ],
-                                            ),
-                                      boxShadow: isRolling
-                                          ? []
-                                          : [
-                                              BoxShadow(
-                                                color: colorScheme.primary
-                                                    .withValues(alpha: 0.4),
-                                                blurRadius: 12,
-                                                offset: const Offset(0, 4),
-                                              ),
-                                            ],
-                                    ),
-                                    child: ElevatedButton.icon(
-                                      onPressed: isRolling
-                                          ? null
-                                          : () => context
-                                                .read<DiceController>()
-                                                .rollDice(),
-                                      icon: isRolling
-                                          ? const SizedBox(
-                                              width: 20,
-                                              height: 20,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 2,
-                                                color: Colors.white,
-                                              ),
-                                            )
-                                          : const Icon(Icons.casino),
-                                      label: Text(
-                                        isRolling ? "ROLLING..." : "ROLL DICE",
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          letterSpacing: 1,
-                                        ),
-                                      ),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.transparent,
-                                        shadowColor: Colors.transparent,
-                                        foregroundColor: colorScheme.onPrimary,
-                                        disabledForegroundColor: Colors.white,
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 16,
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            30,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
+            const Expanded(flex: 5, child: RollerControls()),
           ],
         ),
       ),
