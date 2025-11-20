@@ -151,7 +151,10 @@ class CharacterScreen extends StatelessWidget {
                         isEditing,
                         () {
                           if (isEditing) {
-                            controller.toggleSkillProficiency(skillName);
+                            // FIX: Use context.read for actions to ensure the latest controller state is used
+                            context
+                                .read<CharacterController>()
+                                .toggleSkillProficiency(skillName);
                           } else {
                             // Roll Logic
                             final diceController = context
@@ -192,6 +195,7 @@ class CharacterScreen extends StatelessWidget {
 
     return GestureDetector(
       onTap: onTap,
+      behavior: HitTestBehavior.opaque, // FIX: Ensures taps are caught reliably
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -254,8 +258,6 @@ class CharacterScreen extends StatelessWidget {
       ),
     );
   }
-
-  // --- Existing Card Helpers (Unchanged) ---
 
   Widget _buildVitalCard(
     BuildContext context,

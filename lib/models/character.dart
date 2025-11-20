@@ -13,7 +13,6 @@ class Character {
   int armorClass;
   int proficiency;
 
-  // Skills (List of names that are proficient)
   List<String> proficientSkills;
 
   Character({
@@ -27,8 +26,10 @@ class Character {
     this.currentHp = 20,
     this.armorClass = 10,
     this.proficiency = 2,
-    this.proficientSkills = const [],
-  });
+    List<String>? proficientSkills,
+  }) : proficientSkills = proficientSkills != null
+           ? List<String>.from(proficientSkills)
+           : [];
 
   Map<String, dynamic> toJson() => {
     'strength': strength,
