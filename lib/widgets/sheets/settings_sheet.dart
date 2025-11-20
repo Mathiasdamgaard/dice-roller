@@ -19,90 +19,93 @@ class SettingsSheet extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("App Theme", style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 16),
-          Wrap(
-            spacing: 16,
-            runSpacing: 16,
-            children: colors.map((color) {
-              final isSelected =
-                  controller.seedColor.toARGB32() == color.toARGB32();
-              return GestureDetector(
-                onTap: () => controller.setThemeColor(color),
-                child: Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: color,
-                    shape: BoxShape.circle,
-                    border: isSelected
-                        ? Border.all(color: Colors.white, width: 3)
+      // ADDED: SingleChildScrollView to fix overflow
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("App Theme", style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 16,
+              runSpacing: 16,
+              children: colors.map((color) {
+                final isSelected =
+                    controller.seedColor.toARGB32() == color.toARGB32();
+                return GestureDetector(
+                  onTap: () => controller.setThemeColor(color),
+                  child: Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: color,
+                      shape: BoxShape.circle,
+                      border: isSelected
+                          ? Border.all(color: Colors.white, width: 3)
+                          : null,
+                      boxShadow: [
+                        BoxShadow(
+                          color: color.withValues(alpha: 0.4),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: isSelected
+                        ? const Icon(Icons.check, color: Colors.white)
                         : null,
-                    boxShadow: [
-                      BoxShadow(
-                        color: color.withValues(alpha: 0.4),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
                   ),
-                  child: isSelected
-                      ? const Icon(Icons.check, color: Colors.white)
-                      : null,
-                ),
-              );
-            }).toList(),
-          ),
-
-          const SizedBox(height: 32),
-          const Divider(color: Colors.white10),
-          const SizedBox(height: 16),
-
-          Text("Gameplay", style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 8),
-
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text(
-              "Instant Roll",
-              style: TextStyle(fontWeight: FontWeight.bold),
+                );
+              }).toList(),
             ),
-            subtitle: const Text(
-              "Roll immediately when selecting a die type",
-              style: TextStyle(color: Colors.white54),
-            ),
-            secondary: const Icon(Icons.flash_on, color: Colors.yellow),
 
-            value: controller.instantRoll,
-            activeThumbColor: Theme.of(context).colorScheme.primary,
-            onChanged: (val) => controller.toggleInstantRoll(),
-          ),
+            const SizedBox(height: 32),
+            const Divider(color: Colors.white10),
+            const SizedBox(height: 16),
 
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text(
-              "Exploding Dice",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            subtitle: const Text(
-              "Re-roll max values and add to total",
-              style: TextStyle(color: Colors.white54),
-            ),
-            secondary: const Icon(
-              Icons.local_fire_department,
-              color: Colors.orange,
-            ),
-            value: controller.explodingDice,
-            activeThumbColor: Colors.orange,
-            onChanged: (val) => controller.toggleExplodingDice(),
-          ),
+            Text("Gameplay", style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 8),
 
-          const SizedBox(height: 16),
-        ],
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text(
+                "Instant Roll",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: const Text(
+                "Roll immediately when selecting a die type",
+                style: TextStyle(color: Colors.white54),
+              ),
+              secondary: const Icon(Icons.flash_on, color: Colors.amber),
+              value: controller.instantRoll,
+              activeThumbColor: Theme.of(context).colorScheme.primary,
+              onChanged: (val) => controller.toggleInstantRoll(),
+            ),
+
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text(
+                "Exploding Dice",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: const Text(
+                "Re-roll max values and add to total",
+                style: TextStyle(color: Colors.white54),
+              ),
+              secondary: const Icon(
+                Icons.local_fire_department,
+                color: Colors.orange,
+              ),
+              value: controller.explodingDice,
+              activeThumbColor: Colors.orange,
+              onChanged: (val) => controller.toggleExplodingDice(),
+            ),
+
+            // Add a little bottom padding for safe area
+            const SizedBox(height: 24),
+          ],
+        ),
       ),
     );
   }

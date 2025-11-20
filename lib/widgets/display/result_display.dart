@@ -15,14 +15,13 @@ class ResultDisplay extends StatelessWidget {
     final shakeIntensity = state.shakeIntensity;
 
     if (isRolling) {
-      // Show different text based on intensity
       String statusText = "Rolling...";
       if (shakeIntensity > 1.5) statusText = "ROLLING HARD!";
       if (shakeIntensity > 2.5) statusText = "EXPLODING!!!";
 
       return ShakeWidget(
         isShaking: true,
-        intensity: shakeIntensity, // DYNAMIC INTENSITY
+        intensity: shakeIntensity,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -69,7 +68,6 @@ class ResultDisplay extends StatelessWidget {
     final minPossible = result.individualRolls.length;
     final maxPossible = result.individualRolls.length * result.dieSides;
 
-    // Adjusted luck percentage for Exploding Dice
     final percentage = (maxPossible == minPossible)
         ? 1.0
         : (rawSum - minPossible) / (maxPossible - minPossible);
@@ -79,20 +77,25 @@ class ResultDisplay extends StatelessWidget {
       result.explosionCount,
     );
 
+    final isFresh =
+        DateTime.now().difference(result.timestamp).inMilliseconds < 2000;
+    final beginValue = isFresh ? 0.0 : result.total.toDouble();
+
     return ShakeWidget(
       isShaking: false,
-      // ADDED: Center + SingleChildScrollView to handle overflow while keeping small rolls centered
       child: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(
-            vertical: 16,
-          ), // Add padding for scroll spacing
+          padding: const EdgeInsets.symmetric(vertical: 16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min, // Shrink to fit content
+            mainAxisSize: MainAxisSize.min,
             children: [
               TweenAnimationBuilder<double>(
-                tween: Tween<double>(begin: 0, end: result.total.toDouble()),
+                key: ValueKey(result.timestamp),
+                tween: Tween<double>(
+                  begin: beginValue,
+                  end: result.total.toDouble(),
+                ),
                 duration: const Duration(milliseconds: 600),
                 curve: Curves.easeOutQuart,
                 builder: (context, value, child) {
@@ -158,7 +161,6 @@ class ResultDisplay extends StatelessWidget {
                 alignment: WrapAlignment.center,
                 children: [
                   ...result.individualRolls.map((roll) {
-                    // Logic: If roll > sides, it definitely exploded
                     final exploded = roll > result.dieSides;
                     final isDieCrit = roll >= result.dieSides; // Crit if >= max
                     final isDieFail = roll == 1;
@@ -282,7 +284,6 @@ class ResultDisplay extends StatelessWidget {
     double percentage,
     int explosionCount,
   ) {
-    // If it exploded, it's automatically AMAZING
     if (explosionCount > 0) {
       return (
         const Color(0xFFFF6D00), // Orange-Red
