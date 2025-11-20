@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class ShakeWidget extends StatefulWidget {
   final Widget child;
   final bool isShaking;
-  final double intensity; // New parameter
+  final double intensity; 
 
   const ShakeWidget({
     super.key,
     required this.child,
     required this.isShaking,
-    this.intensity = 1.0, // Default standard shake
+    this.intensity = 1.0, 
   });
 
   @override
