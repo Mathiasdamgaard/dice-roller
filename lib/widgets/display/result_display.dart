@@ -1,7 +1,7 @@
-import 'package:dice_roller/models/saved_preset.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/dice_controller.dart';
+import '../../models/roll_result.dart';
 import 'shake_widget.dart';
 
 class ResultDisplay extends StatelessWidget {
@@ -44,7 +44,7 @@ class ResultDisplay extends StatelessWidget {
             Icon(
               Icons.touch_app,
               size: 64,
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
             ),
             const SizedBox(height: 16),
             Text(
@@ -58,41 +58,17 @@ class ResultDisplay extends StatelessWidget {
       );
     }
 
+    // --- Calculate Style ---
     final rawSum = result.individualRolls.reduce((a, b) => a + b);
     final minPossible = result.individualRolls.length;
     final maxPossible = result.individualRolls.length * result.dieSides;
 
-    Color textColor = Colors.white;
-    List<Shadow> shadows = [];
+    // Calculate luck percentage (0.0 = Worst possible roll, 1.0 = Best possible roll)
+    final percentage = (maxPossible == minPossible)
+        ? 1.0
+        : (rawSum - minPossible) / (maxPossible - minPossible);
 
-    if (maxPossible > minPossible) {
-      final double percentage =
-          (rawSum - minPossible) / (maxPossible - minPossible);
-
-      if (percentage < 0.5) {
-        textColor = Color.lerp(
-          const Color(0xFFEF4444),
-          Colors.white,
-          percentage * 2,
-        )!;
-
-        if (percentage < 0.15) {
-          shadows = [const Shadow(color: Colors.redAccent, blurRadius: 15)];
-        }
-      } else {
-        textColor = Color.lerp(
-          Colors.white,
-          const Color(0xFFFFD700),
-          (percentage - 0.5) * 2,
-        )!;
-
-        if (percentage > 0.85) {
-          shadows = [const Shadow(color: Colors.orangeAccent, blurRadius: 20)];
-        }
-      }
-    } else {
-      textColor = const Color(0xFFFFD700);
-    }
+    final (textColor, shadows) = _calculateRollStyle(percentage);
 
     return ShakeWidget(
       isShaking: false,
@@ -121,7 +97,7 @@ class ResultDisplay extends StatelessWidget {
             width: 60,
             height: 4,
             decoration: BoxDecoration(
-              color: textColor.withOpacity(0.5),
+              color: textColor.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -239,5 +215,33 @@ class ResultDisplay extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  (Color, List<Shadow>) _calculateRollStyle(double percentage) {
+    if (percentage < 0.5) {
+      final color = Color.lerp(
+        const Color(0xFFEF4444),
+        Colors.white,
+        percentage * 2,
+      )!;
+
+      final shadows = percentage < 0.15
+          ? [const Shadow(color: Colors.redAccent, blurRadius: 15)]
+          : <Shadow>[];
+
+      return (color, shadows);
+    } else {
+      final color = Color.lerp(
+        Colors.white,
+        const Color(0xFFFFD700),
+        (percentage - 0.5) * 2,
+      )!;
+
+      final shadows = percentage > 0.85
+          ? [const Shadow(color: Colors.orangeAccent, blurRadius: 20)]
+          : <Shadow>[];
+
+      return (color, shadows);
+    }
   }
 }

@@ -2,21 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/dice_controller.dart';
 
-class DiceTypeSelector extends StatelessWidget {
-  const DiceTypeSelector({super.key});
+class DiceTypeRow extends StatelessWidget {
+  const DiceTypeRow({super.key});
 
   final List<int> diceOptions = const [4, 6, 8, 10, 12, 20, 100];
 
   @override
   Widget build(BuildContext context) {
-    final selected = context.select((DiceController c) => c.selectedSides);
+    final state = context.watch<DiceController>();
+    final selected = state.selectedSides;
+    final themeColor = Theme.of(context).colorScheme.primary;
 
     return SizedBox(
       height: 50,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: diceOptions.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           final sides = diceOptions[index];
           final isSelected = sides == selected;
@@ -27,16 +29,14 @@ class DiceTypeSelector extends StatelessWidget {
               duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: isSelected
-                    ? const Color(0xFF4F46E5)
-                    : const Color(0xFF334155),
+                color: isSelected ? themeColor : const Color(0xFF334155),
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: isSelected
                     ? [
-                        const BoxShadow(
-                          color: Color(0x664F46E5),
+                        BoxShadow(
+                          color: themeColor.withValues(alpha: 0.4),
                           blurRadius: 8,
-                          offset: Offset(0, 2),
+                          offset: const Offset(0, 2),
                         ),
                       ]
                     : [],

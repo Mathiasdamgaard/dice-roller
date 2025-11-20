@@ -1,13 +1,15 @@
+import 'package:dice_roller/widgets/inputs/dice_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../providers/dice_controller.dart';
 import '../widgets/display/result_display.dart';
-import '../widgets/inputs/dice_selector.dart';
 import '../widgets/inputs/count_selector.dart';
 import '../widgets/inputs/modifier_selector.dart';
 import '../widgets/inputs/mode_selector.dart';
 import '../widgets/sheets/presets_sheet.dart';
 import '../widgets/sheets/history_sheet.dart';
+import '../widgets/sheets/settings_sheet.dart';
 
 class DiceRollerScreen extends StatelessWidget {
   const DiceRollerScreen({super.key});
@@ -73,9 +75,19 @@ class DiceRollerScreen extends StatelessWidget {
     );
   }
 
+  void _showSettingsSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF1E293B),
+      showDragHandle: true,
+      builder: (ctx) => const SettingsSheet(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isRolling = context.select((DiceController c) => c.isRolling);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -93,6 +105,11 @@ class DiceRollerScreen extends StatelessWidget {
           onPressed: () => _showHistorySheet(context),
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: "Settings",
+            onPressed: () => _showSettingsSheet(context),
+          ),
           IconButton(
             icon: const Icon(Icons.book),
             tooltip: "Saved Presets",
@@ -138,7 +155,9 @@ class DiceRollerScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      const DiceTypeSelector(),
+
+                      const DiceTypeRow(),
+
                       const SizedBox(height: 24),
                       const Row(
                         children: [
@@ -185,19 +204,20 @@ class DiceRollerScreen extends StatelessWidget {
                                     ? const LinearGradient(
                                         colors: [Colors.grey, Colors.grey],
                                       )
-                                    : const LinearGradient(
+                                    : LinearGradient(
                                         colors: [
-                                          Color(0xFF4F46E5),
-                                          Color(0xFF7C3AED),
+                                          colorScheme.primary,
+                                          colorScheme.tertiary,
                                         ],
                                       ),
+                                // FIXED: Replaced .withOpacity() with .withValues(alpha: ...)
                                 boxShadow: isRolling
                                     ? []
                                     : [
                                         BoxShadow(
-                                          color: const Color(
-                                            0xFF4F46E5,
-                                          ).withOpacity(0.4),
+                                          color: colorScheme.primary.withValues(
+                                            alpha: 0.4,
+                                          ),
                                           blurRadius: 12,
                                           offset: const Offset(0, 4),
                                         ),
@@ -230,6 +250,8 @@ class DiceRollerScreen extends StatelessWidget {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.transparent,
                                   shadowColor: Colors.transparent,
+                                  foregroundColor: colorScheme.onPrimary,
+                                  disabledForegroundColor: Colors.white,
                                   padding: const EdgeInsets.symmetric(
                                     vertical: 16,
                                   ),

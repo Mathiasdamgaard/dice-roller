@@ -1,7 +1,7 @@
-import 'package:dice_roller/models/saved_preset.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/dice_controller.dart';
+import '../../models/roll_result.dart'; // To access RollMode enum
 
 class ModeSelector extends StatelessWidget {
   const ModeSelector({super.key});
@@ -27,20 +27,17 @@ class ModeSelector extends StatelessWidget {
     );
   }
 
-  Widget _buildSegment(
-    BuildContext context,
-    RollMode current,
-    RollMode target,
-    String label,
-  ) {
+  Widget _buildSegment(BuildContext context, RollMode current, RollMode target, String label) {
     final isSelected = current == target;
     Color activeColor;
-    if (target == RollMode.advantage)
-      activeColor = const Color(0xFF059669);
-    else if (target == RollMode.disadvantage)
-      activeColor = const Color(0xFFE11D48);
-    else
-      activeColor = const Color(0xFF4F46E5);
+    
+    if (target == RollMode.advantage) {
+      activeColor = const Color(0xFF059669); 
+    } else if (target == RollMode.disadvantage) {
+      activeColor = const Color(0xFFE11D48); 
+    } else {
+      activeColor = Theme.of(context).colorScheme.primary; 
+    }
 
     return Expanded(
       child: GestureDetector(

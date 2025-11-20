@@ -3,10 +3,18 @@ import 'package:provider/provider.dart';
 import 'providers/dice_controller.dart';
 import 'screens/home_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize controller and load data immediately
+  final diceController = DiceController();
+  await diceController.loadState();
+
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => DiceController())],
+      providers: [
+        ChangeNotifierProvider.value(value: diceController),
+      ],
       child: const DiceApp(),
     ),
   );
@@ -17,13 +25,16 @@ class DiceApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Watch for theme changes
+    final seedColor = context.select((DiceController c) => c.seedColor);
+
     return MaterialApp(
-      title: 'Flutter Dice Roller',
+      title: 'FateForged',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF6750A4),
+          seedColor: seedColor,
           brightness: Brightness.dark,
           surface: const Color(0xFF0F172A),
         ),
