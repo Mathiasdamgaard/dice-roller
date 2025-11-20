@@ -75,6 +75,8 @@ class SettingsSheet extends StatelessWidget {
               "Roll immediately when selecting a die type",
               style: TextStyle(color: Colors.white54),
             ),
+            secondary: const Icon(Icons.flash_on, color: Colors.yellow),
+
             value: controller.instantRoll,
             activeThumbColor: Theme.of(context).colorScheme.primary,
             onChanged: (val) => controller.toggleInstantRoll(),

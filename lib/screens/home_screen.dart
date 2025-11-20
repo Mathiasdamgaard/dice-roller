@@ -1,276 +1,61 @@
-import 'package:dice_roller/widgets/inputs/dice_selector.dart';
+import 'package:dice_roller/screens/roller_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'character_screen.dart';
 
-import '../providers/dice_controller.dart';
-import '../widgets/display/result_display.dart';
-import '../widgets/inputs/count_selector.dart';
-import '../widgets/inputs/modifier_selector.dart';
-import '../widgets/inputs/mode_selector.dart';
-import '../widgets/sheets/presets_sheet.dart';
-import '../widgets/sheets/history_sheet.dart';
-import '../widgets/sheets/settings_sheet.dart';
+class MainNavigator extends StatefulWidget {
+  const MainNavigator({super.key});
 
-class DiceRollerScreen extends StatelessWidget {
-  const DiceRollerScreen({super.key});
+  @override
+  State<MainNavigator> createState() => _MainNavigatorState();
+}
 
-  void _showSaveDialog(BuildContext context) {
-    final controller = context.read<DiceController>();
-    final textController = TextEditingController();
+class _MainNavigatorState extends State<MainNavigator> {
+  int _currentIndex = 0;
 
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1E293B),
-        title: const Text("Save Preset"),
-        content: TextField(
-          controller: textController,
-          decoration: const InputDecoration(
-            labelText: "Preset Name",
-            hintText: "e.g., Fireball",
-            filled: true,
-            fillColor: Color(0xFF0F172A),
-          ),
-          autofocus: true,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text("Cancel"),
-          ),
-          FilledButton(
-            onPressed: () {
-              if (textController.text.isNotEmpty) {
-                controller.saveCurrentPreset(textController.text);
-                Navigator.pop(ctx);
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(const SnackBar(content: Text("Preset Saved!")));
-              }
-            },
-            child: const Text("Save"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showPresetsSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: const Color(0xFF1E293B),
-      showDragHandle: true,
-      isScrollControlled: true,
-      builder: (ctx) => const PresetsSheet(),
-    );
-  }
-
-  void _showHistorySheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: const Color(0xFF1E293B),
-      showDragHandle: true,
-      isScrollControlled: true,
-      builder: (ctx) => const HistorySheet(),
-    );
-  }
-
-  void _showSettingsSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: const Color(0xFF1E293B),
-      showDragHandle: true,
-      builder: (ctx) => const SettingsSheet(),
-    );
+  void _switchToRoller() {
+    setState(() => _currentIndex = 0);
   }
 
   @override
   Widget build(BuildContext context) {
-    final isRolling = context.select((DiceController c) => c.isRolling);
     final colorScheme = Theme.of(context).colorScheme;
 
+    // We rebuild the list here to pass the callback
+    final List<Widget> screens = [
+      const DiceRollerScreen(key: ValueKey('Roller')),
+      CharacterScreen(
+        key: const ValueKey('Character'),
+        onRollRequest: _switchToRoller,
+      ),
+    ];
+
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: const Text(
-          "FateForged",
-          style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.history),
-          tooltip: "History",
-          onPressed: () => _showHistorySheet(context),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            tooltip: "Settings",
-            onPressed: () => _showSettingsSheet(context),
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        switchInCurve: Curves.easeOut,
+        switchOutCurve: Curves.easeIn,
+        transitionBuilder: (Widget child, Animation<double> animation) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+        child: screens[_currentIndex],
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _currentIndex,
+        onDestinationSelected: (index) => setState(() => _currentIndex = index),
+        backgroundColor: const Color(0xFF1E293B),
+        indicatorColor: colorScheme.primary.withValues(alpha: 0.2),
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.casino_outlined),
+            selectedIcon: Icon(Icons.casino),
+            label: 'Roller',
           ),
-          IconButton(
-            icon: const Icon(Icons.book),
-            tooltip: "Saved Presets",
-            onPressed: () => _showPresetsSheet(context),
+          NavigationDestination(
+            icon: Icon(Icons.person_outline),
+            selectedIcon: Icon(Icons.person),
+            label: 'Character',
           ),
         ],
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              flex: 4,
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(24),
-                child: const ResultDisplay(),
-              ),
-            ),
-            Expanded(
-              flex: 5,
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: Color(0xFF1E293B),
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 10,
-                      offset: Offset(0, -5),
-                    ),
-                  ],
-                ),
-                padding: const EdgeInsets.fromLTRB(24, 32, 24, 16),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Dice Type",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white70,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-
-                      const DiceTypeRow(),
-
-                      const SizedBox(height: 24),
-                      const Row(
-                        children: [
-                          Expanded(child: DiceCountSelector()),
-                          SizedBox(width: 16),
-                          Expanded(child: ModifierSelector()),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                      const Text(
-                        "Mode",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white70,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      const ModeSelector(),
-                      const SizedBox(height: 32),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton.icon(
-                              onPressed: isRolling
-                                  ? null
-                                  : () => _showSaveDialog(context),
-                              icon: const Icon(Icons.save_alt),
-                              label: const Text("Save"),
-                              style: OutlinedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                ),
-                                side: const BorderSide(color: Colors.white24),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            flex: 2,
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
-                                gradient: isRolling
-                                    ? const LinearGradient(
-                                        colors: [Colors.grey, Colors.grey],
-                                      )
-                                    : LinearGradient(
-                                        colors: [
-                                          colorScheme.primary,
-                                          colorScheme.tertiary,
-                                        ],
-                                      ),
-                                // FIXED: Replaced .withOpacity() with .withValues(alpha: ...)
-                                boxShadow: isRolling
-                                    ? []
-                                    : [
-                                        BoxShadow(
-                                          color: colorScheme.primary.withValues(
-                                            alpha: 0.4,
-                                          ),
-                                          blurRadius: 12,
-                                          offset: const Offset(0, 4),
-                                        ),
-                                      ],
-                              ),
-                              child: ElevatedButton.icon(
-                                onPressed: isRolling
-                                    ? null
-                                    : () => context
-                                          .read<DiceController>()
-                                          .rollDice(),
-                                icon: isRolling
-                                    ? const SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          color: Colors.white,
-                                        ),
-                                      )
-                                    : const Icon(Icons.casino),
-                                label: Text(
-                                  isRolling ? "ROLLING..." : "ROLL DICE",
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1,
-                                  ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.transparent,
-                                  shadowColor: Colors.transparent,
-                                  foregroundColor: colorScheme.onPrimary,
-                                  disabledForegroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 16,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
