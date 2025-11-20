@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace = "com.lightningcastle.void_roll"
+    namespace = "com.lightningcastle.voidroll"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 

@@ -120,7 +120,6 @@ class DiceRollerScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // CHANGED: Reduced flex from 4 to 3 to shrink the result area
             Expanded(
               flex: 3,
               child: Container(
@@ -129,7 +128,6 @@ class DiceRollerScreen extends StatelessWidget {
                 child: const ResultDisplay(),
               ),
             ),
-            // CHANGED: Kept flex 5, effectively giving controls ~62% of screen (vs 55% before)
             Expanded(
               flex: 5,
               child: Container(
@@ -144,135 +142,135 @@ class DiceRollerScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                // CHANGED: Reduced top padding from 32 to 20
                 padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Dice Type",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white70,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Dice Type",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white70,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            const DiceTypeRow(),
+
+                            const SizedBox(height: 16),
+                            const Row(
+                              children: [
+                                Expanded(child: DiceCountSelector()),
+                                SizedBox(width: 16),
+                                Expanded(child: ModifierSelector()),
+                              ],
+                            ),
+
+                            const SizedBox(height: 16),
+                            const Text(
+                              "Mode",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white70,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            const ModeSelector(),
+
+                            const SizedBox(height: 16),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 12),
+                    ),
 
-                      const DiceTypeRow(),
-
-                      // CHANGED: Reduced gap from 24 to 16
-                      const SizedBox(height: 16),
-                      const Row(
-                        children: [
-                          Expanded(child: DiceCountSelector()),
-                          SizedBox(width: 16),
-                          Expanded(child: ModifierSelector()),
-                        ],
-                      ),
-
-                      // CHANGED: Reduced gap from 24 to 16
-                      const SizedBox(height: 16),
-                      const Text(
-                        "Mode",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white70,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: isRolling
+                                ? null
+                                : () => _showSaveDialog(context),
+                            icon: const Icon(Icons.save_alt),
+                            label: const Text("Save"),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              side: const BorderSide(color: Colors.white24),
+                            ),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 12),
-                      const ModeSelector(),
-
-                      // CHANGED: Reduced gap from 32 to 24
-                      const SizedBox(height: 24),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton.icon(
+                        const SizedBox(width: 16),
+                        Expanded(
+                          flex: 2,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              gradient: isRolling
+                                  ? const LinearGradient(
+                                      colors: [Colors.grey, Colors.grey],
+                                    )
+                                  : LinearGradient(
+                                      colors: [
+                                        colorScheme.primary,
+                                        colorScheme.tertiary,
+                                      ],
+                                    ),
+                              boxShadow: isRolling
+                                  ? []
+                                  : [
+                                      BoxShadow(
+                                        color: colorScheme.primary.withValues(
+                                          alpha: 0.4,
+                                        ),
+                                        blurRadius: 12,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                            ),
+                            child: ElevatedButton.icon(
                               onPressed: isRolling
                                   ? null
-                                  : () => _showSaveDialog(context),
-                              icon: const Icon(Icons.save_alt),
-                              label: const Text("Save"),
-                              style: OutlinedButton.styleFrom(
+                                  : () => context
+                                        .read<DiceController>()
+                                        .rollDice(),
+                              icon: isRolling
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : const Icon(Icons.casino),
+                              label: Text(
+                                isRolling ? "ROLLING..." : "ROLL DICE",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                foregroundColor: colorScheme.onPrimary,
+                                disabledForegroundColor: Colors.white,
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 16,
                                 ),
-                                side: const BorderSide(color: Colors.white24),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            flex: 2,
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
-                                gradient: isRolling
-                                    ? const LinearGradient(
-                                        colors: [Colors.grey, Colors.grey],
-                                      )
-                                    : LinearGradient(
-                                        colors: [
-                                          colorScheme.primary,
-                                          colorScheme.tertiary,
-                                        ],
-                                      ),
-                                boxShadow: isRolling
-                                    ? []
-                                    : [
-                                        BoxShadow(
-                                          color: colorScheme.primary.withValues(
-                                            alpha: 0.4,
-                                          ),
-                                          blurRadius: 12,
-                                          offset: const Offset(0, 4),
-                                        ),
-                                      ],
-                              ),
-                              child: ElevatedButton.icon(
-                                onPressed: isRolling
-                                    ? null
-                                    : () => context
-                                          .read<DiceController>()
-                                          .rollDice(),
-                                icon: isRolling
-                                    ? const SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          color: Colors.white,
-                                        ),
-                                      )
-                                    : const Icon(Icons.casino),
-                                label: Text(
-                                  isRolling ? "ROLLING..." : "ROLL DICE",
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1,
-                                  ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.transparent,
-                                  shadowColor: Colors.transparent,
-                                  foregroundColor: colorScheme.onPrimary,
-                                  disabledForegroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 16,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
                                 ),
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),
